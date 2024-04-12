@@ -1,0 +1,31 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  hello_world:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get Source Branch
+      run: echo "branch=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ env.branch }}
+        fetch-depth: 0
+
+    - name: Identify Changed Directories
+      id: identify_directory
+      run: |
+        cdir=$( git diff --name-only r HEAD^1 HEAD | perl -ne 'print "$1\n" if(/(.*)\/.*/)' | grep -v github | sort |uniq|xargs| perl -ne 'chom; @a=split(/ /,$_); print "[\"" . join("\",\"", @a). "\"];' )
+        echo "Changed directories: $cdir"
+        echo "cdir=$cdir >> $GITHUB_OUTPUT"
+
+    outputs: 
+      changed_dirs: ${{ steps.identify_directory.outputs.cdir }}
+
