@@ -1,24 +1,34 @@
-name: Trigger Workflow in Repo A
-
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+name: Trigger Another Workflow
+on: [push]
 
 jobs:
   trigger:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Workflow in Repository A
+      - name: Trigger Workflow in Another Repository
         uses: actions/github-script@v6
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            github.actions.createWorkflowDispatch({
-              owner: 'steven-rhodes1',
-              repo: 'sandbox',
-              workflow_id: 'pull-request-workflow.yml',
-              ref: 'main',
-              inputs: {
-                pr_number: '${{ github.event.pull_request.number }}'
+            // Use async function to handle the promise returned by createWorkflowDispatch
+            async function run() {
+              try {
+                const response = await github.rest.actions.createWorkflowDispatch({
+                  owner: 'steven-rhodes1',
+                  repo: 'sandbox',
+                  workflow_id: 'pull-request-workflow.yml',  // Use the filename or workflow ID
+                  ref: 'main',  // Usually 'main' or 'master'
+                  inputs: {
+                    example_input: 'example_value'
+                  }
+                });
+                console.log("Workflow dispatched successfully:", response);
+              } catch (error) {
+                console.error("Failed to dispatch workflow:", error);
+                // Throw error to ensure the action fails if there is an issue
+                throw error;
               }
-            })
+            }
+
+            // Call the run function
+            run();
