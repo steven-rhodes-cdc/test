@@ -1,0 +1,9 @@
+Name: Weekly Radar
+
+on:
+  schedule:
+  - cron: 0 12 * * 1
+
+jobs:
+  weekly_radar:
+    name: Weekly Radar

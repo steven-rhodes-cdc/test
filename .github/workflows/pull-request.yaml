@@ -11,7 +11,7 @@ jobs:
       - name: Trigger Workflow in Repository A
         uses: actions/github-script@v6
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{secrets.STEVEN_RHODES1_TOKEN}}
           script: |
             github.actions.createWorkflowDispatch({
               owner: 'steven-rhodes1',
