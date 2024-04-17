@@ -74,5 +74,3 @@ jobs:
         display-workflow-run-url: true
         display-workflow-run-url-interval: 1m
         display-workflow-run-url-timeout: 10m
-      env:
-        access_token: ***
