@@ -2,33 +2,18 @@ name: Trigger Another Workflow
 on: [push]
 
 jobs:
-  trigger:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Workflow in Another Repository
-        uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            // Use async function to handle the promise returned by createWorkflowDispatch
-            async function run() {
-              try {
-                const response = await github.rest.actions.createWorkflowDispatch({
-                  owner: 'steven-rhodes1',
-                  repo: 'sandbox',
-                  workflow_id: 'pull-request-workflow.yml',  // Use the filename or workflow ID
-                  ref: 'main',  // Usually 'main' or 'master'
-                  inputs: {
-                    example_input: 'example_value'
-                  }
-                });
-                console.log("Workflow dispatched successfully:", response);
-              } catch (error) {
-                console.error("Failed to dispatch workflow:", error);
-                // Throw error to ensure the action fails if there is an issue
-                throw error;
-              }
-            }
+  code-scan:
 
-            // Call the run function
-            run();
+    steps: 
+    - name: Run Code Scan
+      uses: aurelien-baudet/workflow-dispatch@v2
+      with:
+        workflow: pull-request-workflow.yaml
+        repo: steven-rhodes1/sandbox
+        ref: ${{ github.event.pull_request.head.ref }}
+        wait-for-completion: true
+        wait-for-completion-timeout: 5m
+        wait-for-completion-interval: 30s
+        display-workflow-run-url: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ubuntu-latest
