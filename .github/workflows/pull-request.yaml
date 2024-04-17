@@ -8,6 +8,12 @@ jobs:
     name: Run Code Scan
     runs-on: ubuntu-latest
     steps:
+    - uses: distributhor/workflow-webhook@v2
+      with:
+        webhook_url: https://github.com/steven-rhodes1/sandbox/actions/workflows/pull-request-workflow.yaml
+        webhook_secret: ${{ secrets.STEVEN_RHODES1_TOKEN }}
+        data: ''
+
     # - name: Code Scan
     #   uses: anecdotes-ai/remote-workflow-control@latest
     #   with:
@@ -20,21 +26,21 @@ jobs:
     #       # '{\"deploy_frontend\": true \"debug_mode\": false}'
     #     wait-timeout-in-minutes: '10'
 
-    - name: Get Commit SHA
-      id: getsha
-      run: | 
-        echo "commitID=$(echo ${GITHUB_SHA})" >> $GITHUB_OUTPUT
+    # - name: Get Commit SHA
+    #   id: getsha
+    #   run: | 
+    #     echo "commitID=$(echo ${GITHUB_SHA})" >> $GITHUB_OUTPUT
 
-    - name: Automatically Dispatch Remote Scan Event 
-      id: auto-devops-wkflow-dispatch
-      uses: aurelien-baudet/workflow-dispatch@v2.1.1
-      with:
-          workflow: pull-request-code-scan.yaml
-          repo: cdcent/data-exchange-hl7-devops
-          token: ${{ secrets.STEVEN_RHODES1_TOKEN }}
-          inputs: '{ "commitID": "${{ steps.getsha.outputs.commitID }}", "release_string": "Snoopy Rules!" }'
-          ref: 'main'
-          wait-for-completion: true
-          wait-for-completion-timeout: 120m
-          wait-for-completion-interval: 300s
-          display-workflow-run-url: true   
+    # - name: Automatically Dispatch Remote Scan Event 
+    #   id: auto-devops-wkflow-dispatch
+    #   uses: aurelien-baudet/workflow-dispatch@v2.1.1
+    #   with:
+    #       workflow: pull-request-code-scan.yaml
+    #       repo: cdcent/data-exchange-hl7-devops
+    #       token: ${{ secrets.STEVEN_RHODES1_TOKEN }}
+    #       inputs: '{ "commitID": "${{ steps.getsha.outputs.commitID }}", "release_string": "Snoopy Rules!" }'
+    #       ref: 'main'
+    #       wait-for-completion: true
+    #       wait-for-completion-timeout: 120m
+    #       wait-for-completion-interval: 300s
+    #       display-workflow-run-url: true   
