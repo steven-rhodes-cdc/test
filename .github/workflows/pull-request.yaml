@@ -1,31 +1,24 @@
-name: Pull Request
+name: Trigger Workflow in Repo steven-rhodes1
 
 on:
   pull_request:
-    branches:
-    - main
+    types: [opened, synchronize, reopened]
 
 jobs:
-  hello_world:
+  trigger:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Get Source Branch
-      run: echo "branch=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
-
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ env.branch }}
-        fetch-depth: 0
-
-    - name: Identify Changed Directories
-      id: identify_directory
-      run: |
-        cdir=$( git diff --name-only r HEAD^1 HEAD | perl -ne 'print "$1\n" if(/(.*)\/.*/)' | grep -v github | sort |uniq|xargs| perl -ne 'chom; @a=split(/ /,$_); print "[\"" . join("\",\"", @a). "\"];' )
-        echo "Changed directories: $cdir"
-        echo "cdir=$cdir >> $GITHUB_OUTPUT"
-
-    outputs: 
-      changed_dirs: ${{ steps.identify_directory.outputs.cdir }}
-
+      - name: Trigger Workflow in Repository A
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.actions.createWorkflowDispatch({
+              owner: 'steven-rhodes1',
+              repo: 'sandbox',
+              workflow_id: 'pull-request-workflow.yml',
+              ref: 'main',
+              inputs: {
+                pr_number: 'PR is ${{ github.event.pull_request.number }}'
+              }
+            })
