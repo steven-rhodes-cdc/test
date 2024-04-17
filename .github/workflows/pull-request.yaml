@@ -8,25 +8,26 @@ jobs:
     name: Run Code Scan
     runs-on: ubuntu-latest
     steps:
-    # - name: Code Scan
-    #   uses: anecdotes-ai/remote-workflow-control@latest
-    #   with:
-    #     github-auth-token: ${{ secrets.STEVEN_RHODES1_TOKEN }}
-    #     workflow-org: 'steven-rhodes1'
-    #     workflow-repo: 'sandbox'
-    #     workflow-yaml: 'pull-request-workflow.yaml'
-    #     workflow-branch: 'main'
-    #     workflow-inputs: '{\"deploy_frontend\": true \"debug_mode\": false}'
-    #     wait-timeout-in-minutes: '10'
-
-    - name: Await Remote Job
-      uses: Colby-Butler-Imprivata/await-remote-workflow@v1
+    - name: Code Scan
+      uses: anecdotes-ai/remote-workflow-control@latest
       with:
         github-auth-token: ${{ secrets.STEVEN_RHODES1_TOKEN }}
-        token-type: 'Bearer'
         workflow-org: 'steven-rhodes1'
         workflow-repo: 'sandbox'
         workflow-yaml: 'pull-request-workflow.yaml'
-        workflow-branch: "main"
-        workflow-inputs: '{\"release_string\": \"Pass In Whatever Values are Expected By The Workflow you Are Calling. Yes, you must escape quotes because this was written in BASH\"}'
+        workflow-branch: 'main'
+        workflow-inputs: '{ \"release_string\": \"Snoopy\" }'
+          # '{\"deploy_frontend\": true \"debug_mode\": false}'
         wait-timeout-in-minutes: '10'
+
+    # - name: Await Remote Job
+    #   uses: Colby-Butler-Imprivata/await-remote-workflow@v1
+    #   with:
+    #     github-auth-token: ${{ secrets.STEVEN_RHODES1_TOKEN }}
+    #     token-type: 'Bearer'
+    #     workflow-org: 'steven-rhodes1'
+    #     workflow-repo: 'sandbox'
+    #     workflow-yaml: 'pull-request-workflow.yaml'
+    #     workflow-branch: "main"
+    #     workflow-inputs: '{\"release_string\": \"Pass In Whatever Values are Expected By The Workflow you Are Calling. Yes, you must escape quotes because this was written in BASH\"}'
+    #     wait-timeout-in-minutes: '10'
