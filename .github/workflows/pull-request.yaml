@@ -26,7 +26,7 @@ jobs:
         token-type: 'Bearer'
         workflow-org: 'steven-rhodes1'
         workflow-repo: 'sandbox'
-        workflow-yaml: 'pull-request-workflow.yml'
+        workflow-yaml: 'pull-request-workflow.yaml'
         workflow-branch: "main"
         workflow-inputs: '{\"release_string\": \"Pass In Whatever Values are Expected By The Workflow you Are Calling. Yes, you must escape quotes because this was written in BASH\"}'
         wait-timeout-in-minutes: '10'
