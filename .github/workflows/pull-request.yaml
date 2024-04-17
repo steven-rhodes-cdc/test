@@ -10,7 +10,8 @@ jobs:
     - name: Run Code Scan
       uses: aurelien-baudet/workflow-dispatch@v2.1.1
       with:
-        workflow: pull-request-workflow.yaml
+        workflow: Pull Request Workflow 
+        # pull-request-workflow.yaml
         repo: steven-rhodes1/sandbox
         ref: ${{ github.event.pull_request.head.ref }}
         wait-for-completion: true
