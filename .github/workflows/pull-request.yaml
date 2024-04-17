@@ -1,21 +1,24 @@
-name: Pull Request
+name: Trigger Workflow in Repo A
 
 on:
   pull_request:
-    branches:
-    - main
+    types: [opened, synchronize, reopened]
 
 jobs:
-  hello_world:
+  trigger:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Identify Changed Directories
-      id: test_message
-      run: |
-        this='Hi Steven!'
-        echo "this=$this >> $GITHUB_OUTPUT"
-
-    outputs: 
-      changed_dirs: ${{ steps.test_message.outputs.this }}
-
+      - name: Trigger Workflow in Repository A
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.actions.createWorkflowDispatch({
+              owner: 'steven-rhodes1',
+              repo: 'sandbox',
+              workflow_id: 'pull-request-workflow.yml',
+              ref: 'main',
+              inputs: {
+                pr_number: '${{ github.event.pull_request.number }}'
+              }
+            })
