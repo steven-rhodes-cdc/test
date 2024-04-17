@@ -9,20 +9,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - uses: lasith-kg/dispatch-workflow@v1
-      id: workflow-dispatch
-      name: 'Dispatch Workflow using workflow_dispatch Method'
-      with:
-        dispatch-method: workflow_dispatch
-        repo: sandbox
-        owner: steven-rhodes1
-        ref: refs/heads/main # or main
-        workflow: pull-request-workflow.yml # Or Workflow ID
-        token: ${{ secrets.STEVEN_RHODES1_TOKEN }} # GitHub Token With Relevant Permissions
-        workflow-inputs: |
-          {
-            "release_string": "Snoopy Rules!"
-          }
+    # - uses: lasith-kg/dispatch-workflow@v1
+    #   id: workflow-dispatch
+    #   name: 'Dispatch Workflow using workflow_dispatch Method'
+    #   with:
+    #     dispatch-method: workflow_dispatch
+    #     repo: sandbox
+    #     owner: steven-rhodes1
+    #     ref: refs/heads/main # or main
+    #     workflow: pull-request-workflow.yml # Or Workflow ID
+    #     token: ${{ secrets.STEVEN_RHODES1_TOKEN }} # GitHub Token With Relevant Permissions
+    #     workflow-inputs: |
+    #       {
+    #         "release_string": "Snoopy Rules!"
+    #       }
 
     # - uses: distributhor/workflow-webhook@v2
     #   env:
@@ -60,3 +60,19 @@ jobs:
     #       wait-for-completion-timeout: 120m
     #       wait-for-completion-interval: 300s
     #       display-workflow-run-url: true   
+
+    - uses: aurelien-baudet/workflow-dispatch@v2.1.1
+      with:
+        workflow: pull-request-workflow.yaml
+        repo: steven-rhdoes1/sandbox
+        token: ${{ secrets.STEVEN_RHODES1_TOKEN }}
+        inputs: '{ "release_string": "Rock Star" }' # { "targetEnv": "dev", "commitID": "72bd1fe9e0fed27bc5058de11a082ac1c3f890e4", "data-exchange-hl7-branch": "develop", }
+        ref: main
+        wait-for-completion: true
+        wait-for-completion-timeout: 120m
+        wait-for-completion-interval: 300s
+        display-workflow-run-url: true
+        display-workflow-run-url-interval: 1m
+        display-workflow-run-url-timeout: 10m
+      env:
+        access_token: ***
