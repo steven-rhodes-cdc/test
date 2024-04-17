@@ -8,11 +8,27 @@ jobs:
     name: Run Code Scan
     runs-on: ubuntu-latest
     steps:
-    - uses: distributhor/workflow-webhook@v2
-      env:
-        webhook_url: https://github.com/steven-rhodes1/sandbox/actions/workflows/pull-request-workflow.yaml
-        webhook_secret: ${{ secrets.STEVEN_RHODES1_TOKEN }}
-        data: ''
+
+    - uses: lasith-kg/dispatch-workflow@v1
+      id: workflow-dispatch
+      name: 'Dispatch Workflow using workflow_dispatch Method'
+      with:
+        dispatch-method: workflow_dispatch
+        repo: sandbox
+        owner: steven-rhodes1
+        ref: refs/heads/main # or main
+        workflow: pull-request-workflow.yml # Or Workflow ID
+        token: ${{ secrets.STEVEN_RHODES1_TOKEN }} # GitHub Token With Relevant Permissions
+        workflow-inputs: |
+          {
+            "release_string": "Snoopy Rules!"
+          }
+
+    # - uses: distributhor/workflow-webhook@v2
+    #   env:
+    #     webhook_url: https://github.com/steven-rhodes1/sandbox/actions/workflows/pull-request-workflow.yaml
+    #     webhook_secret: ${{ secrets.STEVEN_RHODES1_TOKEN }}
+    #     data: ''
 
     # - name: Code Scan
     #   uses: anecdotes-ai/remote-workflow-control@latest
