@@ -8,26 +8,33 @@ jobs:
     name: Run Code Scan
     runs-on: ubuntu-latest
     steps:
-    - name: Code Scan
-      uses: anecdotes-ai/remote-workflow-control@latest
-      with:
-        github-auth-token: ${{ secrets.STEVEN_RHODES1_TOKEN }}
-        workflow-org: 'steven-rhodes1'
-        workflow-repo: 'sandbox'
-        workflow-yaml: 'pull-request-workflow.yaml'
-        workflow-branch: 'main'
-        workflow-inputs: '{ \"release_string\": \"Snoopy\" }'
-          # '{\"deploy_frontend\": true \"debug_mode\": false}'
-        wait-timeout-in-minutes: '10'
-
-    # - name: Await Remote Job
-    #   uses: Colby-Butler-Imprivata/await-remote-workflow@v1
+    # - name: Code Scan
+    #   uses: anecdotes-ai/remote-workflow-control@latest
     #   with:
     #     github-auth-token: ${{ secrets.STEVEN_RHODES1_TOKEN }}
-    #     token-type: 'Bearer'
     #     workflow-org: 'steven-rhodes1'
     #     workflow-repo: 'sandbox'
     #     workflow-yaml: 'pull-request-workflow.yaml'
-    #     workflow-branch: "main"
-    #     workflow-inputs: '{\"release_string\": \"Pass In Whatever Values are Expected By The Workflow you Are Calling. Yes, you must escape quotes because this was written in BASH\"}'
+    #     workflow-branch: 'main'
+    #     workflow-inputs: '{ \"release_string\": \"Snoopy\" }'
+    #       # '{\"deploy_frontend\": true \"debug_mode\": false}'
     #     wait-timeout-in-minutes: '10'
+
+    - name: Get Commit SHA
+      id: getsha
+      run: | 
+        echo "commitID=$(echo ${GITHUB_SHA})" >> $GITHUB_OUTPUT
+
+    - name: Automatically Dispatch Remote Scan Event 
+      id: auto-devops-wkflow-dispatch
+      uses: aurelien-baudet/workflow-dispatch@v2.1.1
+      with:
+          workflow: pull-request-code-scan.yaml
+          repo: cdcent/data-exchange-hl7-devops
+          token: ${{ secrets.STEVEN_RHODES1_TOKEN }}
+          inputs: '{ "commitID": "${{ steps.getsha.outputs.commitID }}", "release_string": "Snoopy Rules!" }'
+          ref: 'main'
+          wait-for-completion: true
+          wait-for-completion-timeout: 120m
+          wait-for-completion-interval: 300s
+          display-workflow-run-url: true   
