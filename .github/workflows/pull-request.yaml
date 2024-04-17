@@ -5,18 +5,17 @@ on:
 
 jobs:
   code-scan:
-
-    steps: 
-    - name: Run Code Scan
-      uses: aurelien-baudet/workflow-dispatch@v2.1.1
-      with:
-        workflow: Pull Request Workflow 
-        # pull-request-workflow.yaml
-        repo: steven-rhodes1/sandbox
-        ref: ${{ github.event.pull_request.head.ref }}
-        wait-for-completion: true
-        wait-for-completion-timeout: 5m
-        wait-for-completion-interval: 30s
-        display-workflow-run-url: true
-        token: ${{ secrets.GITHUB_TOKEN }}
+    name: Run Code Scan
     runs-on: ubuntu-latest
+    steps:
+    - name: Await Remote Job
+      uses: Colby-Butler-Imprivata/await-remote-workflow@v1
+      with:
+        github-auth-token: ${{ secrets.MY_TOKEN }}
+        token-type: 'Bearer'
+        workflow-org: 'steven-rhodes1'
+        workflow-repo: 'sandbox'
+        workflow-yaml: 'pull-request-workflow.yml'
+        workflow-branch: "main"
+        workflow-inputs: '{\"release_string\": \"Pass In Whatever Values are Expected By The Workflow you Are Calling. Yes, you must escape quotes because this was written in BASH\"}'
+        wait-timeout-in-minutes: '10'
