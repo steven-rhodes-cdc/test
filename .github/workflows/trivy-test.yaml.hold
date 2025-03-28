@@ -1,0 +1,50 @@
+name: Trivy Test.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  trivy-comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Download Atlantis artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: atlantis-output
+          path: .
+
+      - name: Parse Trivy results
+        id: parse-trivy
+        run: |
+          if [ -f "trivy-results.json" ]; then
+            RESULTS=$(cat trivy-results.json)
+            echo "results=$RESULTS" >> $GITHUB_OUTPUT
+          else
+            echo "results={}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Format Trivy results
+        id: format-trivy
+        if: ${{ steps.parse-trivy.outputs.results != '{}' }}
+        run: |
+          RESULTS="${{ steps.parse-trivy.outputs.results }}"
+          FORMATTED_RESULTS=$(echo "$RESULTS" | jq -r '.Results[] | "Severity: \(.Severity), Resource: \(.Target), Message: \(.Messages[])"')
+          echo "formatted_results<<EOF" >> $GITHUB_OUTPUT
+          echo "$FORMATTED_RESULTS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: Comment Trivy results
+        uses: peter-evans/create-or-update-comment@v3
+        if: ${{ steps.parse-trivy.outputs.results != '{}' }}
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## Trivy Scan Results
+
+            ```text
+            ${{ steps.format-trivy.outputs.formatted_results }}
+            ```
+          reactions: '+1'
